@@ -11,6 +11,7 @@ resource "aws_vpc" "main_vpc" {
 resource "aws_subnet" "public_subnet" {
   vpc_id     = aws_vpc.main_vpc.id
   cidr_block = var.sub_public_cidr
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "${terraform.workspace}-public"
@@ -165,5 +166,10 @@ resource "aws_route_table" "internet" {
 # association de la route de sortie au subnet public
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.internet.id
+}
+
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.internet.id
 }
